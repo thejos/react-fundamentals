@@ -1,23 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react";
+
+/*Since we don’t need anything from within the App component that will be used to define
+variable 'title' – for example parameters coming from the component’s
+function signature – we can define the variable outside of the App component*/
+const title = "first react app";
+//why const?
+/*  avoid var, because of its weird issues with scoping/hoisting
+    use const as a default (signals variable shouldn't change)
+    use let when variable should be re-assigned */
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Hello World</h1>
+      <hr />
+      <h3>{title}</h3>
     </div>
   );
 }
