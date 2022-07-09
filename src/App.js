@@ -12,6 +12,19 @@ const title = "first react app";
     use const as a default (signals variable shouldn't change)
     use let when variable should be re-assigned */
 
+// JavaScript Object
+/*Object values are written as name : value pairs (name and value separated by a colon).*/
+const welcome = {
+  greeting: "hey",
+  welcomeTitle: title,
+};
+
+/*Essentially everything in curly braces in JSX can be used for JavaScript. For example, executing a
+function works this way too*/
+function getTitle(titleText) {
+  return titleText;
+}
+
 /**1. This React component, called the App component, is just a JavaScript function. In contrast
 to JavaScript functions, it’s defined in PascalCase. This kind of component is commonly
 called a function component. Function components are the modern way of using components
@@ -22,13 +35,23 @@ another component. These props will be accessible via the function’s signature
 then.
 3. the App component returns code that resembles HTML. You will see how this new
 syntax, called JSX, allows you to combine JavaScript and HTML for displaying highly dynamic
-and interactive content in a browser.*/
+and interactive content in a browser.
+4. Comments inside react component need to be multi-line comment wrapped in curly braces*/
 function App() {
   return (
     <div>
       <h1>Hello World</h1>
       <hr />
+      {/*The returned output of the App component not only resembles HTML, but it
+      can also be mixed with JavaScript. In fact, this output is called JSX
+      (JavaScript XML), powerfully combines HTML and JavaScript.*/}
       <h3>{title}</h3>
+      <h3>
+        {welcome.greeting} {welcome.welcomeTitle}
+      </h3>
+      <h3>hey {getTitle(title)} again!</h3>
+      <label htmlFor="search">Search: </label>
+      <input id="search" type="text" />
     </div>
   );
 }
