@@ -25,6 +25,29 @@ function getTitle(titleText) {
   return titleText;
 }
 
+/*let’s define the array as a variable. Similar as before, we can define a variable outside or inside
+the component. The following defines it outside: */
+const itemArray = [
+  {
+    title: "React",
+    url: "https://reactjs.org/",
+    author: "Jordan Walke",
+    num_comments: 3,
+    points: 4,
+    objectID: 0,
+  },
+  {
+    title: "Redux",
+    url: "https://redux.js.org/",
+    author: "Dan Abramov, Andrew Clark",
+    num_comments: 2,
+    points: 5,
+    objectID: 1,
+  },
+]; //end itemArray[]
+/*Each item in the array has a title, a url, an author, an identifier (objectID),
+ points – which indicate the popularity of an item – and a count of comments (num_comments). */
+
 /**1. This React component, called the App component, is just a JavaScript function. In contrast
 to JavaScript functions, it’s defined in PascalCase. This kind of component is commonly
 called a function component. Function components are the modern way of using components
@@ -50,6 +73,25 @@ function App() {
         {welcome.greeting} {welcome.welcomeTitle}
       </h3>
       <h3>hey {getTitle(title)} again!</h3>
+      <hr />
+
+      {/*use the built-in JavaScript map method for arrays to iterate over each item 
+      of the array (itemArray) and return each item's title.
+      Within the map function, we have access to each item and its properties. */}
+      <ul>
+        {itemArray.map(function (item) {
+          return (
+            <li key={item.objectID}>
+              <span>
+                <a href={item.url}>{item.title}</a>
+              </span>
+              <span>&ensp;- {item.author},</span>
+              <span> {item.points} pts,</span>
+              <span> {item.num_comments} comments</span>
+            </li>
+          );
+        })}
+      </ul>
       <label htmlFor="search">Search: </label>
       <input id="search" type="text" />
     </div>
