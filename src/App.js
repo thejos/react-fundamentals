@@ -83,18 +83,18 @@ function App() {
       <h3>hey {getTitle(title)} again!</h3>
       <hr />
       {/*new Items component can be used in the App component where we have been
-      using the inlined functionality previously */}
+      using the inlined functionality previously.
+      Creating an instance of Items component */}
       <Items />
+      {/*creating an instance of Search component */}
       <Search />
     </div>
   );
-}
+} //END App()
 
 /**Components are the foundation of every React application. Components should scale with application’s
 size. Instead of making one component larger and more complex, split one component into multiple 
-components eventually. Components encapsulate meaningful tasks while contributing to the greater good of a larger React
-application. Extracting a component is a task that should be performed very often. It’s always the case 
-that a component will grow in size and complexity*/
+components eventually. Components encapsulate meaningful tasks while contributing to the greater good of a larger React application. Extracting a component is a task that should be performed very often. It’s always the case that a component will grow in size and complexity*/
 function Items() {
   return (
     /*use the built-in JavaScript map method for arrays to iterate over each item 
@@ -117,13 +117,23 @@ function Items() {
   );
 }
 
-function Search() {
-  return (
-    <div>
-      <label htmlFor="search">Search: </label>
-      <input id="search" type="text" />
-    </div>
-  );
-}
+/**Once we’ve defined a component, we can use it as an HTML element anywhere in our JSX. The
+element produces a component instance of your component, or in other words, the component gets
+instantiated. You can create as many component instances as you want. It’s not much different from
+a JavaScript class definition and usage. However, technically a JavaScript class and React component
+are not the same, just their usage makes it convenient to demonstrate their similarities.
+
+This is an Arrow function (for more details see chapter: React Component Definition (Advanced) in The Road to React book by Robin Wieruch). 
+An arrow function expression is a compact alternative to a traditional function expression, but is limited and can't be used in all situations. 
+If an arrow function’s only purpose is to return a value and it doesn’t have any business logic in between, you can remove the block body (curly braces) of the function. In a concise body, an
+implicit return statement is attached, so you can remove the return statement.
+See also:
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions */
+const Search = () => (
+  <div>
+    <label htmlFor="search">Search: </label>
+    <input id="search" type="text" />
+  </div>
+);
 
 export default App;
