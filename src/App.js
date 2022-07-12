@@ -129,11 +129,15 @@ If an arrow function’s only purpose is to return a value and it doesn’t have
 implicit return statement is attached, so you can remove the return statement.
 See also:
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions */
-const Search = () => (
-  <div>
-    <label htmlFor="search">Search: </label>
-    <input id="search" type="text" />
-  </div>
-);
+const Search = () => {
+  const handleChange = (event) => console.log(event.target.value); // arrow function
+  // const handleChange = function (event) {return console.log(event.target.value)}; //normal function
+  return (
+    <div>
+      <label htmlFor="search">Search: </label>
+      <input id="search" type="text" onChange={handleChange} />
+    </div>
+  );
+};
 
 export default App;
