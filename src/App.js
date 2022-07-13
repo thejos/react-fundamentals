@@ -49,6 +49,7 @@ syntax, called JSX, allows you to combine JavaScript and HTML for displaying hig
 and interactive content in a browser.
 5. Comments inside react component need to be multi-line comment wrapped in curly braces.*/
 function App() {
+  console.log("App renders");
   /*'storiesArray' variable was used directly from the global scope in the App component, and later in the 'Items' component. 
   This could work if you only had one global variable, but it isn’t maintainable with multiple variables across multiple components. By using so-called props in React, we can pass variables as 
   information from one component to another component.*/
@@ -69,7 +70,7 @@ function App() {
       points: 5,
       objectID: 1,
     },
-  ]; //end itemArray[]
+  ]; //end storiesArray[]
 
   return (
     <div>
@@ -108,6 +109,7 @@ Following this explanation, information (props) can only be passed from a parent
 component and not vice versa.
 It's also important to note that React's props are read only (immutable). As a developer, you should never mutate props but only read them in your components. You can derive new values from them though (see computed properties later). After all, props are only used to pass data from a parent to a child component React. Essentially props are just the vehicle to transport data down the component tree.*/
 function Items(props) {
+  console.log("Items renders");
   return (
     /* use React props to pass the 'storiesArray' to the 'Items' component;
     After passing it to the 'Items' component, we can access it as 'items' property from the 'props' object in the 'Items' component’s function signature;
@@ -123,10 +125,13 @@ function Items(props) {
 }
 
 function Item(props) {
+  console.log("Item renders");
   return (
     <li>
       <span>
-        <a href={props.item.url}>{props.item.title}</a>
+        <a href={props.item.url} target="_blank" rel="noreferrer">
+          {props.item.title}
+        </a>
       </span>
       <span>&ensp;- {props.item.author},</span>
       <span> {props.item.points} pts,</span>
@@ -148,12 +153,39 @@ implicit return statement is attached, so you can remove the return statement.
 See also:
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions */
 const Search = () => {
-  const handleChange = (event) => console.log(event.target.value); // arrow function
+  console.log("Search renders");
+  /*Notify React to re-render the component with the new
+searchTerm state after the event handler updated it. In order to do so, we need to tell React that
+searchTerm is a state that changes over time and that whenever it changes React has to re-render its
+affected component(s).
+React offers us a utility function called useState for it.
+React’s useState function takes an initial state as an argument – where we will use an empty string.
+By providing this initial state to useState, we are telling React that this state will change over time.
+Furthermore, calling this function will return an array with two entries: The first entry (searchTerm)
+represents the current state; the second entry is a function to update this state (setSearchTerm).
+
+It’s important to note that the useState function is called a React hook. It’s only one of many
+hooks provided by React.*/
+  const [searchTerm, setSearchTerm] = React.useState("");
+
+  const handleChange = (event) => {
+    //second entry - setSearchTerm (from a useState()), a function to update the state.
+    setSearchTerm(event.target.value);
+    console.log(event.target.value);
+  }; // arrow function
   // const handleChange = function (event) {return console.log(event.target.value)}; //normal function
   return (
     <div>
       <label htmlFor="search">&ensp;Search: </label>
-      <input id="search" type="text" onChange={handleChange} />
+      <input
+        id="search"
+        type="text"
+        onChange={handleChange}
+        autoComplete="off"
+      />
+      <span>
+        &emsp;Searching for: <strong>{searchTerm}</strong>
+      </span>
     </div>
   );
 };
