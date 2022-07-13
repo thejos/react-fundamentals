@@ -25,26 +25,6 @@ function getTitle(titleText) {
   return titleText;
 }
 
-/*let’s define the array as a variable. Similar as before, we can define a variable outside or inside
-the component. The following defines it outside: */
-const itemArray = [
-  {
-    title: "React",
-    url: "https://reactjs.org/",
-    author: "Jordan Walke",
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: "Redux",
-    url: "https://redux.js.org/",
-    author: "Dan Abramov, Andrew Clark",
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-]; //end itemArray[]
 /*Each item in the array has a title, a url, an author, an identifier (objectID),
  points – which indicate the popularity of an item – and a count of comments (num_comments). */
 
@@ -69,6 +49,28 @@ syntax, called JSX, allows you to combine JavaScript and HTML for displaying hig
 and interactive content in a browser.
 5. Comments inside react component need to be multi-line comment wrapped in curly braces.*/
 function App() {
+  /*'storiesArray' variable was used directly from the global scope in the App component, and later in the 'Items' component. 
+  This could work if you only had one global variable, but it isn’t maintainable with multiple variables across multiple components. By using so-called props in React, we can pass variables as 
+  information from one component to another component.*/
+  const storiesArray = [
+    {
+      title: "React",
+      url: "https://reactjs.org/",
+      author: "Jordan Walke",
+      num_comments: 3,
+      points: 4,
+      objectID: 0,
+    },
+    {
+      title: "Redux",
+      url: "https://redux.js.org/",
+      author: "Dan Abramov, Andrew Clark",
+      num_comments: 2,
+      points: 5,
+      objectID: 1,
+    },
+  ]; //end itemArray[]
+
   return (
     <div>
       <h1>Hello World</h1>
@@ -82,38 +84,54 @@ function App() {
       </h3>
       <h3>hey {getTitle(title)} again!</h3>
       <hr />
-      {/*new Items component can be used in the App component where we have been
-      using the inlined functionality previously.
-      Creating an instance of Items component */}
-      <Items />
+      <br />
       {/*creating an instance of Search component */}
       <Search />
+      <br />
+      {/*The variable is called 'storiesArray' in the App component, and we pass it under this name to the 'Items' component. In the 'Items' component’s instantiation, however, it is assigned to the 'items' HTML attribute. */}
+      <Items items={storiesArray} />
     </div>
   );
 } //END App()
 
 /**Components are the foundation of every React application. Components should scale with application’s
 size. Instead of making one component larger and more complex, split one component into multiple 
-components eventually. Components encapsulate meaningful tasks while contributing to the greater good of a larger React application. Extracting a component is a task that should be performed very often. It’s always the case that a component will grow in size and complexity*/
-function Items() {
+components eventually. Components encapsulate meaningful tasks while contributing to the greater good of a larger React application. Extracting a component is a task that should be performed very often. It’s always the case that a component will grow in size and complexity.
+
+What are React props?
+Essentially React component props are used to pass data from component to component.
+Everything that we pass from a parent component to a child component via a component element’s
+HTML attribute can be accessed in the child component. The child component receives an object
+parameter (props) which includes all the passed attributes as properties (props).
+In conclusion, one can see how props are used to pass information down the component tree.
+Following this explanation, information (props) can only be passed from a parent to a child
+component and not vice versa.
+It's also important to note that React's props are read only (immutable). As a developer, you should never mutate props but only read them in your components. You can derive new values from them though (see computed properties later). After all, props are only used to pass data from a parent to a child component React. Essentially props are just the vehicle to transport data down the component tree.*/
+function Items(props) {
   return (
-    /*use the built-in JavaScript map method for arrays to iterate over each item 
-      of the array (itemArray) and return each item's title.
-      Within the map function, we have access to each item and its properties. */
+    /* use React props to pass the 'storiesArray' to the 'Items' component;
+    After passing it to the 'Items' component, we can access it as 'items' property from the 'props' object in the 'Items' component’s function signature;
+    Use the built-in JavaScript map method for arrays to iterate over each item 
+    of the array (storiesArray) and return each item's title.
+    Within the map function, we have access to each item and its properties. */
     <ul>
-      {itemArray.map(function (item) {
-        return (
-          <li key={item.objectID}>
-            <span>
-              <a href={item.url}>{item.title}</a>
-            </span>
-            <span>&ensp;- {item.author},</span>
-            <span> {item.points} pts,</span>
-            <span> {item.num_comments} comments</span>
-          </li>
-        );
+      {props.items.map(function (item) {
+        return <Item key={item.objectID} item={item} />;
       })}
     </ul>
+  );
+}
+
+function Item(props) {
+  return (
+    <li>
+      <span>
+        <a href={props.item.url}>{props.item.title}</a>
+      </span>
+      <span>&ensp;- {props.item.author},</span>
+      <span> {props.item.points} pts,</span>
+      <span> {props.item.num_comments} comments</span>
+    </li>
   );
 }
 
@@ -134,7 +152,7 @@ const Search = () => {
   // const handleChange = function (event) {return console.log(event.target.value)}; //normal function
   return (
     <div>
-      <label htmlFor="search">Search: </label>
+      <label htmlFor="search">&ensp;Search: </label>
       <input id="search" type="text" onChange={handleChange} />
     </div>
   );
