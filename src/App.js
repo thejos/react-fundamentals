@@ -72,6 +72,31 @@ function App() {
     },
   ]; //end storiesArray[]
 
+  /*Notify React to re-render the component with the new
+searchTerm state after the event handler updated it. In order to do so, we need to tell React that
+searchTerm is a state that changes over time and that whenever it changes React has to re-render its
+affected component(s).
+React offers us a utility function called useState for it.
+React’s useState function takes an initial state as an argument – where we will use an empty string.
+By providing this initial state to useState, we are telling React that this state will change over time.
+Furthermore, calling this function will return an array with two entries: The first entry (searchTerm)
+represents the current state; the second entry is a function to update this state (setSearchTerm).
+
+It’s important to note that the useState function is called a React hook. It’s only one of many
+hooks provided by React.*/
+  const [searchTerm, setSearchTerm] = React.useState("");
+
+  const handleSearch = (event) => {
+    //second entry - setSearchTerm (from a useState()), a function to update the state.
+    setSearchTerm(event.target.value);
+    console.log(event.target.value);
+  }; // arrow function
+  // const handleSearch = function (event) {return console.log(event.target.value)}; //normal function
+
+  const searchedStories = storiesArray.filter((story) =>
+    story.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
       <h1>Hello World</h1>
@@ -87,10 +112,10 @@ function App() {
       <hr />
       <br />
       {/*creating an instance of Search component */}
-      <Search />
+      <Search searchingFor={searchTerm} onSearch={handleSearch} />
       <br />
       {/*The variable is called 'storiesArray' in the App component, and we pass it under this name to the 'Items' component. In the 'Items' component’s instantiation, however, it is assigned to the 'items' HTML attribute. */}
-      <Items items={storiesArray} />
+      <Items items={searchedStories} />
     </div>
   );
 } //END App()
@@ -152,39 +177,20 @@ If an arrow function’s only purpose is to return a value and it doesn’t have
 implicit return statement is attached, so you can remove the return statement.
 See also:
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions */
-const Search = () => {
+const Search = (props) => {
   console.log("Search renders");
-  /*Notify React to re-render the component with the new
-searchTerm state after the event handler updated it. In order to do so, we need to tell React that
-searchTerm is a state that changes over time and that whenever it changes React has to re-render its
-affected component(s).
-React offers us a utility function called useState for it.
-React’s useState function takes an initial state as an argument – where we will use an empty string.
-By providing this initial state to useState, we are telling React that this state will change over time.
-Furthermore, calling this function will return an array with two entries: The first entry (searchTerm)
-represents the current state; the second entry is a function to update this state (setSearchTerm).
 
-It’s important to note that the useState function is called a React hook. It’s only one of many
-hooks provided by React.*/
-  const [searchTerm, setSearchTerm] = React.useState("");
-
-  const handleChange = (event) => {
-    //second entry - setSearchTerm (from a useState()), a function to update the state.
-    setSearchTerm(event.target.value);
-    console.log(event.target.value);
-  }; // arrow function
-  // const handleChange = function (event) {return console.log(event.target.value)}; //normal function
   return (
     <div>
       <label htmlFor="search">&ensp;Search: </label>
       <input
         id="search"
         type="text"
-        onChange={handleChange}
+        onChange={props.onSearch}
         autoComplete="off"
       />
       <span>
-        &emsp;Searching for: <strong>{searchTerm}</strong>
+        &emsp;Searching for: <em>{props.searchingFor}</em>
       </span>
     </div>
   );
