@@ -133,7 +133,9 @@ In conclusion, one can see how props are used to pass information down the compo
 Following this explanation, information (props) can only be passed from a parent to a child
 component and not vice versa.
 It's also important to note that React's props are read only (immutable). As a developer, you should never mutate props but only read them in your components. You can derive new values from them though (see computed properties later). After all, props are only used to pass data from a parent to a child component React. Essentially props are just the vehicle to transport data down the component tree.*/
-function Items(props) {
+/* *Chapter: Props Handling (Advanced):
+Destructuring the props object right away in the function signature of our component. */
+function Items({ items }) {
   console.log("Items renders");
   return (
     /* use React props to pass the 'storiesArray' to the 'Items' component;
@@ -142,28 +144,30 @@ function Items(props) {
     of the array (storiesArray) and return each item's title.
     Within the map function, we have access to each item and its properties. */
     <ul>
-      {props.items.map(function (item) {
+      {items.map(function (item) {
         return <Item key={item.objectID} item={item} />;
       })}
     </ul>
   );
 }
 
-function Item(props) {
+/**Chapter: Props Handling (Advanced):
+Refactor Item component from traditional function to arrow function. Destructuring the props object right away in the function signature of the component. */
+const Item = ({ item }) => {
   console.log("Item renders");
   return (
     <li>
       <span>
-        <a href={props.item.url} target="_blank" rel="noreferrer">
-          {props.item.title}
+        <a href={item.url} target="_blank" rel="noreferrer">
+          {item.title}
         </a>
       </span>
-      <span>&ensp;- {props.item.author},</span>
-      <span> {props.item.points} pts,</span>
-      <span> {props.item.num_comments} comments</span>
+      <span>&ensp;- {item.author},</span>
+      <span> {item.points} pts,</span>
+      <span> {item.num_comments} comments</span>
     </li>
   );
-}
+};
 
 /**Once we’ve defined a component, we can use it as an HTML element anywhere in our JSX. The
 element produces a component instance of your component, or in other words, the component gets
@@ -177,23 +181,21 @@ If an arrow function’s only purpose is to return a value and it doesn’t have
 implicit return statement is attached, so you can remove the return statement.
 See also:
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions */
-const Search = (props) => {
-  console.log("Search renders");
-
-  return (
-    <div>
-      <label htmlFor="search">&ensp;Search: </label>
-      <input
-        id="search"
-        type="text"
-        onChange={props.onSearch}
-        autoComplete="off"
-      />
-      <span>
-        &emsp;Searching for: <em>{props.searchingFor}</em>
-      </span>
-    </div>
-  );
-};
+/* *Chapter: Props Handling (Advanced):
+React’s props are rarely used in components by themselves; rather, all the information that
+is contained in the props object is used. By destructuring the props object right away in the
+component’s function signature, we can conveniently access all information without dealing with
+its props container.
+Destructuring the props object right away in the function signature of our component.
+-Search component’s arrow function refactored from block body into concise body. */
+const Search = ({ onSearch, searchingFor }) => (
+  <div>
+    <label htmlFor="search">&ensp;Search: </label>
+    <input id="search" type="text" onChange={onSearch} autoComplete="off" />
+    <span>
+      &emsp;Searching for: <em>{searchingFor}</em>
+    </span>
+  </div>
+);
 
 export default App;
