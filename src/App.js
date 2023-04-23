@@ -84,7 +84,19 @@ represents the current state; the second entry is a function to update this stat
 
 It’s important to note that the useState function is called a React hook. It’s only one of many
 hooks provided by React.*/
-  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchTerm, setSearchTerm] = React.useState(
+    //use the stored value, if a value exists, to set the initial state of the searchTerm in React’s
+    //useState Hook. Otherwise, default to our initial state (“”) - empty string.
+    localStorage.getItem("searchingFor") || ""
+  );
+
+  /*Use React’s useEffect Hook to trigger the side-effect each time the searchTerm changes.
+  Using a side-effect to store the recent search from the browser’s local storage and load it upon component initialization.  */
+  React.useEffect(() => {
+    /*use the local storage to store the searchTerm accompanied by an identifier
+    whenever a user types into the HTML input field*/
+    localStorage.setItem("searchingFor", searchTerm);
+  }, [searchTerm]);
 
   const handleSearch = (event) => {
     //second entry - setSearchTerm (from a useState()), a function to update the state.
@@ -93,6 +105,7 @@ hooks provided by React.*/
   }; // arrow function
   // const handleSearch = function (event) {return console.log(event.target.value)}; //normal function
 
+  /*The JavaScript array’s built-in filter function is used to create a new filtered array. The filter function takes a function as an argument, which accesses each item in the array and returns true or false. If the function returns true, meaning the condition is met, the item stays in the newly created array (searchedStories); if the function returns false, it’s removed */
   const searchedStories = storiesArray.filter((story) =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
