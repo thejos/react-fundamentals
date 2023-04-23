@@ -126,7 +126,12 @@ hooks provided by React.*/
       <hr />
       <br />
       {/*creating an instance of Search component */}
-      <Search searchingFor={searchTerm} onSearch={handleSearch} />
+      <InputWithLabel
+        id="search"
+        label="Search"
+        inputValue={searchTerm}
+        onInputChange={handleSearch}
+      />
       <br />
       {/*The variable is called 'storiesArray' in the App component, and we pass it under this name to the 'Items' component. In the 'Items' component’s instantiation, however, it is assigned to the 'items' HTML attribute. */}
       <Items items={searchedStories} />
@@ -201,8 +206,14 @@ is contained in the props object is used. By destructuring the props object righ
 component’s function signature, we can conveniently access all information without dealing with
 its props container.
 Destructuring the props object right away in the function signature of our component.
--Search component’s arrow function refactored from block body into concise body. */
-const Search = ({ onSearch, searchingFor }) => (
+-InputWithLabel component’s arrow function refactored from block body into concise body. */
+const InputWithLabel = ({
+  id,
+  label,
+  type = "text",
+  onInputChange,
+  inputValue,
+}) => (
   /*One caveat with JSX, especially when we create a dedicated Search component, is that we must
   introduce a wrapping HTML element (<div></div>) to render it. Another solution is to use a React
   fragment. A fragment wraps other elements into a single top-level element without adding to the rendered output. As an alternative, you can also use <React.Fragment></React.Fragment> instead of the
@@ -210,10 +221,10 @@ const Search = ({ onSearch, searchingFor }) => (
   Fragments are useful because grouping elements with a Fragment has no effect on layout or styles, unlike if you wrapped the elements in another container like a DOM element. Grouping elements in Fragment has no effect on the resulting DOM; it is the same as if the elements were not grouped. 
   Note: Modern React uses <Fragment></Fragment>*/
   <Fragment>
-    <label htmlFor="search">&ensp;Search: </label>
-    <input id="search" type="text" onChange={onSearch} autoComplete="off" />
+    <label htmlFor={id}>&ensp;{label}: </label>
+    <input id={id} type={type} onChange={onInputChange} autoComplete="off" />
     <span>
-      &emsp;Searching for: <em>{searchingFor}</em>
+      &emsp;Searching for: <em>{inputValue}</em>
     </span>
   </Fragment>
 );
