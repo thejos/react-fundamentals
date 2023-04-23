@@ -128,10 +128,11 @@ hooks provided by React.*/
       {/*creating an instance of Search component */}
       <InputWithLabel
         id="search"
-        label="Search"
         inputValue={searchTerm}
         onInputChange={handleSearch}
-      />
+      >
+        <strong>Search:</strong>
+      </InputWithLabel>
       <br />
       {/*The variable is called 'storiesArray' in the App component, and we pass it under this name to the 'Items' component. In the 'Items' component’s instantiation, however, it is assigned to the 'items' HTML attribute. */}
       <Items items={searchedStories} />
@@ -209,7 +210,7 @@ Destructuring the props object right away in the function signature of our compo
 -InputWithLabel component’s arrow function refactored from block body into concise body. */
 const InputWithLabel = ({
   id,
-  label,
+  children,
   type = "text",
   onInputChange,
   inputValue,
@@ -221,7 +222,7 @@ const InputWithLabel = ({
   Fragments are useful because grouping elements with a Fragment has no effect on layout or styles, unlike if you wrapped the elements in another container like a DOM element. Grouping elements in Fragment has no effect on the resulting DOM; it is the same as if the elements were not grouped. 
   Note: Modern React uses <Fragment></Fragment>*/
   <Fragment>
-    <label htmlFor={id}>&ensp;{label}: </label>
+    <label htmlFor={id}>&ensp;{children} </label>
     <input id={id} type={type} onChange={onInputChange} autoComplete="off" />
     <span>
       &emsp;Searching for: <em>{inputValue}</em>
