@@ -47,6 +47,11 @@ const storiesArray = [
   },
 ]; //end storiesArray[]
 
+const getAsyncStories = () =>
+  new Promise((resolve) =>
+    setTimeout(() => resolve({ data: { stories: storiesArray } }), 2000)
+  );
+
 /**1. This React component, called the App component, is just a JavaScript function. In contrast
 to JavaScript functions, it’s defined in PascalCase. This kind of component is commonly
 called a function component. Function components are the modern way of using components
@@ -92,7 +97,13 @@ function App() {
     localStorage.setItem("searchingFor", searchTerm);
   }, [searchTerm]);
 
-  const [stories, setStories] = React.useState(storiesArray);
+  const [stories, setStories] = React.useState([]);
+
+  React.useEffect(() => {
+    getAsyncStories().then((result) => {
+      setStories(result.data.stories);
+    });
+  }, []);
 
   const handleRemoveStory = (item) => {
     const newStories = stories.filter(
