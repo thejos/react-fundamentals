@@ -130,6 +130,7 @@ hooks provided by React.*/
         id="search"
         inputValue={searchTerm}
         onInputChange={handleSearch}
+        isFocused
       >
         <strong>Search:</strong>
       </InputWithLabel>
@@ -210,24 +211,38 @@ Destructuring the props object right away in the function signature of our compo
 -InputWithLabel component’s arrow function refactored from block body into concise body. */
 const InputWithLabel = ({
   id,
+  //Using just isFocused as an attribute is equivalent to isFocused={true}
+  isFocused,
   children,
   type = "text",
   onInputChange,
   inputValue,
-}) => (
-  /*One caveat with JSX, especially when we create a dedicated Search component, is that we must
-  introduce a wrapping HTML element (<div></div>) to render it. Another solution is to use a React
-  fragment. A fragment wraps other elements into a single top-level element without adding to the rendered output. As an alternative, you can also use <React.Fragment></React.Fragment> instead of the
-  shorthand <></> All Search elements, input field, label and span should be visible in your browser now. So if you prefer to omit the wrapping <div> or <span> elements, substitute them with an empty tag that is allowed in JSX, and doesn’t introduce intermediate elements in your rendered HTML.
-  Fragments are useful because grouping elements with a Fragment has no effect on layout or styles, unlike if you wrapped the elements in another container like a DOM element. Grouping elements in Fragment has no effect on the resulting DOM; it is the same as if the elements were not grouped. 
-  Note: Modern React uses <Fragment></Fragment>*/
-  <Fragment>
-    <label htmlFor={id}>&ensp;{children} </label>
-    <input id={id} type={type} onChange={onInputChange} autoComplete="off" />
-    <span>
-      &emsp;Searching for: <em>{inputValue}</em>
-    </span>
-  </Fragment>
-);
+}) => {
+  const inputRef = React.useRef();
+
+  React.useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isFocused]);
+
+  return (
+    /*One caveat with JSX, especially when we create a dedicated InputWithLabel component, is that we must introduce a wrapping HTML element (<div></div>) to render it. Another solution is to use a React fragment. A fragment wraps other elements into a single top-level element without adding to the rendered output. As an alternative, you can also use <React.Fragment></React.Fragment> instead of the shorthand <></> All Search elements, input field, label and span should be visible in your browser now. So if you prefer to omit the wrapping <div> or <span> elements, substitute them with an empty tag that is allowed in JSX, and doesn’t introduce intermediate elements in your rendered HTML.
+    Fragments are useful because grouping elements with a Fragment has no effect on layout or styles, unlike if you wrapped the elements in another container like a DOM element. Grouping elements in Fragment has no effect on the resulting DOM; it is the same as if the elements were not grouped. Note: Modern React uses <Fragment></Fragment>*/
+    <Fragment>
+      <label htmlFor={id}>&ensp;{children} </label>
+      <input
+        id={id}
+        type={type}
+        onChange={onInputChange}
+        autoComplete="off"
+        ref={inputRef}
+      />
+      <span>
+        &emsp;Searching for: <em>{inputValue}</em>
+      </span>
+    </Fragment>
+  );
+};
 
 export default App;
