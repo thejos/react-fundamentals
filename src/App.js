@@ -28,6 +28,24 @@ function getTitle(titleText) {
 
 /*Each item in the array has a title, a url, an author, an identifier (objectID),
  points – which indicate the popularity of an item – and a count of comments (num_comments). */
+const storiesArray = [
+  {
+    title: "React",
+    url: "https://reactjs.org/",
+    author: "Jordan Walke",
+    num_comments: 3,
+    points: 4,
+    objectID: 0,
+  },
+  {
+    title: "Redux",
+    url: "https://redux.js.org/",
+    author: "Dan Abramov, Andrew Clark",
+    num_comments: 2,
+    points: 5,
+    objectID: 1,
+  },
+]; //end storiesArray[]
 
 /**1. This React component, called the App component, is just a JavaScript function. In contrast
 to JavaScript functions, it’s defined in PascalCase. This kind of component is commonly
@@ -51,40 +69,15 @@ and interactive content in a browser.
 5. Comments inside react component need to be multi-line comment wrapped in curly braces.*/
 function App() {
   console.log("App renders");
-  /*'storiesArray' variable was used directly from the global scope in the App component, and later in the 'Items' component. 
-  This could work if you only had one global variable, but it isn’t maintainable with multiple variables across multiple components. By using so-called props in React, we can pass variables as 
-  information from one component to another component.*/
-  const storiesArray = [
-    {
-      title: "React",
-      url: "https://reactjs.org/",
-      author: "Jordan Walke",
-      num_comments: 3,
-      points: 4,
-      objectID: 0,
-    },
-    {
-      title: "Redux",
-      url: "https://redux.js.org/",
-      author: "Dan Abramov, Andrew Clark",
-      num_comments: 2,
-      points: 5,
-      objectID: 1,
-    },
-  ]; //end storiesArray[]
 
-  /*Notify React to re-render the component with the new
-searchTerm state after the event handler updated it. In order to do so, we need to tell React that
-searchTerm is a state that changes over time and that whenever it changes React has to re-render its
-affected component(s).
-React offers us a utility function called useState for it.
-React’s useState function takes an initial state as an argument – where we will use an empty string.
-By providing this initial state to useState, we are telling React that this state will change over time.
-Furthermore, calling this function will return an array with two entries: The first entry (searchTerm)
-represents the current state; the second entry is a function to update this state (setSearchTerm).
-
-It’s important to note that the useState function is called a React hook. It’s only one of many
-hooks provided by React.*/
+  /*Notify React to re-render the component with the new searchTerm state after the event handler updated it. In order to do so, we need to tell React that searchTerm is a state that changes over time and that whenever it changes React has to re-render its affected component(s).
+  React offers us a utility function called useState for it.
+  React’s useState function takes an initial state as an argument – where we will use an empty string.
+  By providing this initial state to useState, we are telling React that this state will change over time.
+  Furthermore, calling this function will return an array with two entries: The first entry (searchTerm)
+  represents the current state; the second entry is a function to update this state (setSearchTerm).
+  It’s important to note that the useState function is called a React hook. It’s only one of many
+  hooks provided by React.*/
   const [searchTerm, setSearchTerm] = React.useState(
     //use the stored value, if a value exists, to set the initial state of the searchTerm in React’s
     //useState Hook. Otherwise, default to our initial state (“”) - empty string.
@@ -99,6 +92,15 @@ hooks provided by React.*/
     localStorage.setItem("searchingFor", searchTerm);
   }, [searchTerm]);
 
+  const [stories, setStories] = React.useState(storiesArray);
+
+  const handleRemoveStory = (item) => {
+    const newStories = stories.filter(
+      (story) => item.objectID !== story.objectID
+    );
+    setStories(newStories);
+  };
+
   const handleSearch = (event) => {
     //second entry - setSearchTerm (from a useState()), a function to update the state.
     setSearchTerm(event.target.value);
@@ -107,7 +109,7 @@ hooks provided by React.*/
   // const handleSearch = function (event) {return console.log(event.target.value)}; //normal function
 
   /*The JavaScript array’s built-in filter function is used to create a new filtered array. The filter function takes a function as an argument, which accesses each item in the array and returns true or false. If the function returns true, meaning the condition is met, the item stays in the newly created array (searchedStories); if the function returns false, it’s removed */
-  const searchedStories = storiesArray.filter((story) =>
+  const searchedStories = stories.filter((story) =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -130,13 +132,14 @@ hooks provided by React.*/
         id="search"
         inputValue={searchTerm}
         onInputChange={handleSearch}
+        //Using just isFocused as an attribute is equivalent to isFocused={true}
         isFocused
       >
         <strong>Search:</strong>
       </InputWithLabel>
       <br />
       {/*The variable is called 'storiesArray' in the App component, and we pass it under this name to the 'Items' component. In the 'Items' component’s instantiation, however, it is assigned to the 'items' HTML attribute. */}
-      <Items items={searchedStories} />
+      <Items items={searchedStories} onRemoveItem={handleRemoveStory} />
     </div>
   );
 } //END App()
@@ -156,7 +159,7 @@ component and not vice versa.
 It's also important to note that React's props are read only (immutable). As a developer, you should never mutate props but only read them in your components. You can derive new values from them though (see computed properties later). After all, props are only used to pass data from a parent to a child component React. Essentially props are just the vehicle to transport data down the component tree.*/
 /* *Chapter: Props Handling (Advanced):
 Destructuring the props object right away in the function signature of our component. */
-function Items({ items }) {
+function Items({ items, onRemoveItem }) {
   console.log("Items renders");
   return (
     /* use React props to pass the 'storiesArray' to the 'Items' component;
@@ -166,7 +169,9 @@ function Items({ items }) {
     Within the map function, we have access to each item and its properties. */
     <ul>
       {items.map(function (item) {
-        return <Item key={item.objectID} item={item} />;
+        return (
+          <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
+        );
       })}
     </ul>
   );
@@ -174,7 +179,7 @@ function Items({ items }) {
 
 /**Chapter: Props Handling (Advanced):
 Refactor Item component from traditional function to arrow function. Destructuring the props object right away in the function signature of the component. */
-const Item = ({ item }) => {
+const Item = ({ item, onRemoveItem }) => {
   console.log("Item renders");
   return (
     <li>
@@ -186,6 +191,12 @@ const Item = ({ item }) => {
       <span>&ensp;- {item.author},</span>
       <span> {item.points} pts,</span>
       <span> {item.num_comments} comments</span>
+      <span>
+        &nbsp;
+        <button type="button" onClick={() => onRemoveItem(item)}>
+          Dismiss
+        </button>
+      </span>
     </li>
   );
 };
@@ -211,7 +222,6 @@ Destructuring the props object right away in the function signature of our compo
 -InputWithLabel component’s arrow function refactored from block body into concise body. */
 const InputWithLabel = ({
   id,
-  //Using just isFocused as an attribute is equivalent to isFocused={true}
   isFocused,
   children,
   type = "text",
