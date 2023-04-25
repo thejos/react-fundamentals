@@ -52,6 +52,19 @@ const getAsyncStories = () =>
     setTimeout(() => resolve({ data: { stories: storiesArray } }), 2000)
   );
 
+const storiesReducer = (state, action) => {
+  switch (action.type) {
+    case "SET_STORIES":
+      return action.payload;
+    case "REMOVE_STORY":
+      return state.filter(
+        (story) => action.payload.objectID !== story.objectID
+      );
+    default:
+      throw new Error();
+  }
+};
+
 /**1. This React component, called the App component, is just a JavaScript function. In contrast
 to JavaScript functions, it’s defined in PascalCase. This kind of component is commonly
 called a function component. Function components are the modern way of using components
@@ -97,7 +110,7 @@ function App() {
     localStorage.setItem("searchingFor", searchTerm);
   }, [searchTerm]);
 
-  const [stories, setStories] = React.useState([]);
+  const [stories, dispatchStories] = React.useReducer(storiesReducer, []);
   /*apply conditional rendering: state for a loading indicator which gives a users feedback about the pending data request*/
   const [isLoading, setIsLoading] = React.useState(false);
   //state for error handling
@@ -107,17 +120,14 @@ function App() {
     setIsLoading(true);
     getAsyncStories()
       .then((result) => {
-        setStories(result.data.stories);
+        dispatchStories({ type: "SET_STORIES", payload: result.data.stories });
         setIsLoading(false);
       })
       .catch(() => setIsError(true));
   }, []);
 
   const handleRemoveStory = (item) => {
-    const newStories = stories.filter(
-      (story) => item.objectID !== story.objectID
-    );
-    setStories(newStories);
+    dispatchStories({ type: "REMOVE_STORY", payload: item });
   };
 
   const handleSearch = (event) => {
