@@ -98,11 +98,19 @@ function App() {
   }, [searchTerm]);
 
   const [stories, setStories] = React.useState([]);
+  /*apply conditional rendering: state for a loading indicator which gives a users feedback about the pending data request*/
+  const [isLoading, setIsLoading] = React.useState(false);
+  //state for error handling
+  const [isError, setIsError] = React.useState(false);
 
   React.useEffect(() => {
-    getAsyncStories().then((result) => {
-      setStories(result.data.stories);
-    });
+    setIsLoading(true);
+    getAsyncStories()
+      .then((result) => {
+        setStories(result.data.stories);
+        setIsLoading(false);
+      })
+      .catch(() => setIsError(true));
   }, []);
 
   const handleRemoveStory = (item) => {
@@ -149,8 +157,12 @@ function App() {
         <strong>Search:</strong>
       </InputWithLabel>
       <br />
-      {/*The variable is called 'storiesArray' in the App component, and we pass it under this name to the 'Items' component. In the 'Items' component’s instantiation, however, it is assigned to the 'items' HTML attribute. */}
-      <Items items={searchedStories} onRemoveItem={handleRemoveStory} />
+      {isError && <p>An error occured...</p>}
+      {isLoading ? (
+        <p>&ensp;Loading...</p>
+      ) : (
+        <Items items={searchedStories} onRemoveItem={handleRemoveStory} />
+      )}
     </div>
   );
 } //END App()
