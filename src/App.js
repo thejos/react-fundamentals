@@ -93,7 +93,7 @@ function App() {
   const [searchTerm, setSearchTerm] = React.useState(
     //use the stored value, if a value exists, to set the initial state of the searchTerm in React’s
     //useState Hook. Otherwise, default to our initial state (“”) - empty string.
-    localStorage.getItem("searchingFor") || ""
+    localStorage.getItem("searchingFor") || " "
   );
 
   /*Use React’s useEffect Hook to trigger the side-effect each time the searchTerm changes.
@@ -110,12 +110,11 @@ function App() {
     isError: false,
   });
 
-  React.useEffect(() => {
+  const handleFetchStories = React.useCallback(() => {
     if (!searchTerm) {
       return;
     }
     dispatchStories({ type: "STORIES_FETCH_INIT" });
-    //fetch(`${API_ENDPOINT}react`)
     fetch(`${API_ENDPOINT}${searchTerm}`)
       .then((response) => response.json())
       .then((result) => {
@@ -126,6 +125,10 @@ function App() {
       })
       .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
   }, [searchTerm]);
+
+  React.useEffect(() => {
+    handleFetchStories();
+  }, [handleFetchStories]);
 
   const handleRemoveStory = (item) => {
     dispatchStories({ type: "REMOVE_STORY", payload: item });
