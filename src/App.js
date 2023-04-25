@@ -48,18 +48,38 @@ const storiesArray = [
 ]; //end storiesArray[]
 
 const getAsyncStories = () =>
-  new Promise((resolve) =>
-    setTimeout(() => resolve({ data: { stories: storiesArray } }), 2000)
+  new Promise(
+    (resolve) =>
+      setTimeout(() => resolve({ data: { stories: storiesArray } }), 2000)
+    /*Change your pseudo data fetching function to the following to simulate
+     the error handling */
+    //(resolve, reject) => setTimeout(reject, 2000)
   );
 
 const storiesReducer = (state, action) => {
   switch (action.type) {
-    case "SET_STORIES":
-      return action.payload;
+    case "STORIES_FETCH_INIT":
+      return { ...state, isLoading: true, isError: false };
+    case "STORIES_FETCH_SUCCESS":
+      return {
+        ...state,
+        isLoading: false,
+        isError: false,
+        data: action.payload,
+      };
+    case "STORIES_FETCH_FAILURE":
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+      };
     case "REMOVE_STORY":
-      return state.filter(
-        (story) => action.payload.objectID !== story.objectID
-      );
+      return {
+        ...state,
+        data: state.data.filter(
+          (story) => action.payload.objectID !== story.objectID
+        ),
+      };
     default:
       throw new Error();
   }
@@ -110,20 +130,22 @@ function App() {
     localStorage.setItem("searchingFor", searchTerm);
   }, [searchTerm]);
 
-  const [stories, dispatchStories] = React.useReducer(storiesReducer, []);
-  /*apply conditional rendering: state for a loading indicator which gives a users feedback about the pending data request*/
-  const [isLoading, setIsLoading] = React.useState(false);
-  //state for error handling
-  const [isError, setIsError] = React.useState(false);
+  const [stories, dispatchStories] = React.useReducer(storiesReducer, {
+    data: [],
+    isLoading: false,
+    isError: false,
+  });
 
   React.useEffect(() => {
-    setIsLoading(true);
+    dispatchStories({ type: "STORIES_FETCH_INIT" });
     getAsyncStories()
       .then((result) => {
-        dispatchStories({ type: "SET_STORIES", payload: result.data.stories });
-        setIsLoading(false);
+        dispatchStories({
+          type: "STORIES_FETCH_SUCCESS",
+          payload: result.data.stories,
+        });
       })
-      .catch(() => setIsError(true));
+      .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
   }, []);
 
   const handleRemoveStory = (item) => {
@@ -138,7 +160,7 @@ function App() {
   // const handleSearch = function (event) {return console.log(event.target.value)}; //normal function
 
   /*The JavaScript array’s built-in filter function is used to create a new filtered array. The filter function takes a function as an argument, which accesses each item in the array and returns true or false. If the function returns true, meaning the condition is met, the item stays in the newly created array (searchedStories); if the function returns false, it’s removed */
-  const searchedStories = stories.filter((story) =>
+  const searchedStories = stories.data.filter((story) =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -167,8 +189,8 @@ function App() {
         <strong>Search:</strong>
       </InputWithLabel>
       <br />
-      {isError && <p>An error occured...</p>}
-      {isLoading ? (
+      {stories.isError && <p>An error occured...</p>}
+      {stories.isLoading ? (
         <p>&ensp;Loading...</p>
       ) : (
         <Items items={searchedStories} onRemoveItem={handleRemoveStory} />
