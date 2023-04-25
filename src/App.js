@@ -57,8 +57,7 @@ const storiesReducer = (state, action) => {
 
 /*Fetch data from a real remote third-party API. We will use the reliable and informative Hacker
 News API to request popular tech stories. */
-//const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query='
-const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?tags=";
+const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
 /**1. This React component, called the App component, is just a JavaScript function. In contrast
 to JavaScript functions, it’s defined in PascalCase. This kind of component is commonly
@@ -112,9 +111,12 @@ function App() {
   });
 
   React.useEffect(() => {
+    if (!searchTerm) {
+      return;
+    }
     dispatchStories({ type: "STORIES_FETCH_INIT" });
     //fetch(`${API_ENDPOINT}react`)
-    fetch(`${API_ENDPOINT}story`)
+    fetch(`${API_ENDPOINT}${searchTerm}`)
       .then((response) => response.json())
       .then((result) => {
         dispatchStories({
@@ -123,7 +125,7 @@ function App() {
         });
       })
       .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
-  }, []);
+  }, [searchTerm]);
 
   const handleRemoveStory = (item) => {
     dispatchStories({ type: "REMOVE_STORY", payload: item });
@@ -135,11 +137,6 @@ function App() {
     console.log(event.target.value);
   }; // arrow function
   // const handleSearch = function (event) {return console.log(event.target.value)}; //normal function
-
-  /*The JavaScript array’s built-in filter function is used to create a new filtered array. The filter function takes a function as an argument, which accesses each item in the array and returns true or false. If the function returns true, meaning the condition is met, the item stays in the newly created array (searchedStories); if the function returns false, it’s removed */
-  const searchedStories = stories.data.filter((story) =>
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div>
@@ -170,7 +167,7 @@ function App() {
       {stories.isLoading ? (
         <p>&ensp;Loading...</p>
       ) : (
-        <Items items={searchedStories} onRemoveItem={handleRemoveStory} />
+        <Items items={stories.data} onRemoveItem={handleRemoveStory} />
       )}
     </div>
   );
