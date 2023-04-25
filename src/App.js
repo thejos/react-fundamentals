@@ -26,36 +26,6 @@ function getTitle(titleText) {
   return titleText;
 }
 
-/*Each item in the array has a title, a url, an author, an identifier (objectID),
- points – which indicate the popularity of an item – and a count of comments (num_comments). */
-const storiesArray = [
-  {
-    title: "React",
-    url: "https://reactjs.org/",
-    author: "Jordan Walke",
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: "Redux",
-    url: "https://redux.js.org/",
-    author: "Dan Abramov, Andrew Clark",
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-]; //end storiesArray[]
-
-const getAsyncStories = () =>
-  new Promise(
-    (resolve) =>
-      setTimeout(() => resolve({ data: { stories: storiesArray } }), 2000)
-    /*Change your pseudo data fetching function to the following to simulate
-     the error handling */
-    //(resolve, reject) => setTimeout(reject, 2000)
-  );
-
 const storiesReducer = (state, action) => {
   switch (action.type) {
     case "STORIES_FETCH_INIT":
@@ -84,6 +54,11 @@ const storiesReducer = (state, action) => {
       throw new Error();
   }
 };
+
+/*Fetch data from a real remote third-party API. We will use the reliable and informative Hacker
+News API to request popular tech stories. */
+//const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query='
+const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?tags=";
 
 /**1. This React component, called the App component, is just a JavaScript function. In contrast
 to JavaScript functions, it’s defined in PascalCase. This kind of component is commonly
@@ -138,11 +113,13 @@ function App() {
 
   React.useEffect(() => {
     dispatchStories({ type: "STORIES_FETCH_INIT" });
-    getAsyncStories()
+    //fetch(`${API_ENDPOINT}react`)
+    fetch(`${API_ENDPOINT}story`)
+      .then((response) => response.json())
       .then((result) => {
         dispatchStories({
           type: "STORIES_FETCH_SUCCESS",
-          payload: result.data.stories,
+          payload: result.hits,
         });
       })
       .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
