@@ -93,7 +93,7 @@ function App() {
   const [searchTerm, setSearchTerm] = React.useState(
     //use the stored value, if a value exists, to set the initial state of the searchTerm in React’s
     //useState Hook. Otherwise, default to our initial state (“”) - empty string.
-    localStorage.getItem("searchingFor") || " "
+    localStorage.getItem("searchingFor") || ""
   );
 
   /*Use React’s useEffect Hook to trigger the side-effect each time the searchTerm changes.
@@ -104,6 +104,8 @@ function App() {
     localStorage.setItem("searchingFor", searchTerm);
   }, [searchTerm]);
 
+  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
+
   const [stories, dispatchStories] = React.useReducer(storiesReducer, {
     data: [],
     isLoading: false,
@@ -111,11 +113,11 @@ function App() {
   });
 
   const handleFetchStories = React.useCallback(() => {
-    if (!searchTerm) {
+    if (!url) {
       return;
     }
     dispatchStories({ type: "STORIES_FETCH_INIT" });
-    fetch(`${API_ENDPOINT}${searchTerm}`)
+    fetch(url)
       .then((response) => response.json())
       .then((result) => {
         dispatchStories({
@@ -124,7 +126,7 @@ function App() {
         });
       })
       .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
-  }, [searchTerm]);
+  }, [url]);
 
   React.useEffect(() => {
     handleFetchStories();
@@ -134,12 +136,15 @@ function App() {
     dispatchStories({ type: "REMOVE_STORY", payload: item });
   };
 
-  const handleSearch = (event) => {
+  const handleSearchInput = (event) => {
     //second entry - setSearchTerm (from a useState()), a function to update the state.
     setSearchTerm(event.target.value);
     console.log(event.target.value);
   }; // arrow function
-  // const handleSearch = function (event) {return console.log(event.target.value)}; //normal function
+
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
+  };
 
   return (
     <div>
@@ -159,12 +164,15 @@ function App() {
       <InputWithLabel
         id="search"
         inputValue={searchTerm}
-        onInputChange={handleSearch}
+        onInputChange={handleSearchInput}
         //Using just isFocused as an attribute is equivalent to isFocused={true}
         isFocused
       >
         <strong>Search:</strong>
       </InputWithLabel>
+      <button type="button" disabled={!searchTerm} onClick={handleSearchSubmit}>
+        Submit
+      </button>
       <br />
       {stories.isError && <p>An error occured...</p>}
       {stories.isLoading ? (
@@ -281,7 +289,7 @@ const InputWithLabel = ({
         ref={inputRef}
       />
       <span>
-        &emsp;Searching for: <em>{inputValue}</em>
+        &emsp;Searching for: <em>{inputValue}&nbsp;</em>
       </span>
     </Fragment>
   );
