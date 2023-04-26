@@ -143,8 +143,13 @@ function App() {
     console.log(event.target.value);
   }; // arrow function
 
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = (event) => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
+    /*preventDefault is called on the event when submitting the form to 
+    prevent a browser reload/refresh. In the past, it was desired to refresh 
+    the browser to flush all state and to submit the data to a backend. Nowadays, 
+    a library such as React, provides more flexibility in dealing with the submit event.*/
+    event.preventDefault();
   };
 
   return (
@@ -161,19 +166,11 @@ function App() {
       <h3>hey {getTitle(title)} again!</h3>
       <hr />
       <br />
-      {/*creating an instance of Search component */}
-      <InputWithLabel
-        id="search"
-        inputValue={searchTerm}
-        onInputChange={handleSearchInput}
-        //Using just isFocused as an attribute is equivalent to isFocused={true}
-        isFocused
-      >
-        <strong>Search:</strong>
-      </InputWithLabel>
-      <button type="button" disabled={!searchTerm} onClick={handleSearchSubmit}>
-        Submit
-      </button>
+      <SearchForm
+        searchTerm={searchTerm}
+        onSearchInput={handleSearchInput}
+        onSearchSubmit={handleSearchSubmit}
+      />
       <br />
       {stories.isError && <p>An error occured...</p>}
       {stories.isLoading ? (
@@ -242,6 +239,23 @@ const Item = ({ item, onRemoveItem }) => {
   );
 };
 
+const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => (
+  <form onSubmit={onSearchSubmit}>
+    <InputWithLabel
+      id="search"
+      inputValue={searchTerm}
+      onInputChange={onSearchInput}
+      //Using just isFocused as an attribute is equivalent to isFocused={true}
+      isFocused
+    >
+      <strong>Search:</strong>
+    </InputWithLabel>
+    <button type="submit" disabled={!searchTerm}>
+      Submit
+    </button>
+  </form>
+);
+
 /**Once we’ve defined a component, we can use it as an HTML element anywhere in our JSX. The
 element produces a component instance of your component, or in other words, the component gets
 instantiated. You can create as many component instances as you want. It’s not much different from
@@ -259,8 +273,7 @@ React’s props are rarely used in components by themselves; rather, all the inf
 is contained in the props object is used. By destructuring the props object right away in the
 component’s function signature, we can conveniently access all information without dealing with
 its props container.
-Destructuring the props object right away in the function signature of our component.
--InputWithLabel component’s arrow function refactored from block body into concise body. */
+Destructuring the props object right away in the function signature of our component.*/
 const InputWithLabel = ({
   id,
   isFocused,
@@ -278,7 +291,7 @@ const InputWithLabel = ({
   }, [isFocused]);
 
   return (
-    /*One caveat with JSX, especially when we create a dedicated InputWithLabel component, is that we must introduce a wrapping HTML element (<div></div>) to render it. Another solution is to use a React fragment. A fragment wraps other elements into a single top-level element without adding to the rendered output. As an alternative, you can also use <React.Fragment></React.Fragment> instead of the shorthand <></> All Search elements, input field, label and span should be visible in your browser now. So if you prefer to omit the wrapping <div> or <span> elements, substitute them with an empty tag that is allowed in JSX, and doesn’t introduce intermediate elements in your rendered HTML.
+    /*One caveat with JSX, especially when we create a dedicated searchForm component, is that we must introduce a wrapping HTML element (<div></div>) to render it. Another solution is to use a React fragment. A fragment wraps other elements into a single top-level element without adding to the rendered output. As an alternative, you can also use <React.Fragment></React.Fragment> instead of the shorthand <></> All Search elements, input field, label and span should be visible in your browser now. So if you prefer to omit the wrapping <div> or <span> elements, substitute them with an empty tag that is allowed in JSX, and doesn’t introduce intermediate elements in your rendered HTML.
     Fragments are useful because grouping elements with a Fragment has no effect on layout or styles, unlike if you wrapped the elements in another container like a DOM element. Grouping elements in Fragment has no effect on the resulting DOM; it is the same as if the elements were not grouped. Note: Modern React uses <Fragment></Fragment>*/
     <Fragment>
       <label htmlFor={id}>&ensp;{children} </label>
