@@ -3,6 +3,8 @@ import { Fragment } from "react";
 import axios from "axios";
 // import "./App.css";
 import styles from "./App.module.css";
+import { ReactComponent as RemoveIcon } from "./delete-icon.svg";
+import { ReactComponent as SubmitIcon } from "./check-icon.svg";
 
 /*Since we don’t need anything from within the App component that will be used to define
 variable 'title' – for example parameters coming from the component’s
@@ -238,7 +240,7 @@ const Item = ({ item, onRemoveItem }) => {
           type="button"
           onClick={() => onRemoveItem(item)}
         >
-          Dismiss
+          <RemoveIcon height="8px" width="18px" />
         </button>
       </span>
     </li>
@@ -261,7 +263,7 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => (
       type="submit"
       disabled={!searchTerm}
     >
-      Submit
+      <SubmitIcon height="18px" width="24px" />
     </button>
   </form>
 );

@@ -44,6 +44,8 @@
 .button:hover {
   background: #171212;
   color: #ffffff;
+  fill: #ffffff;
+  stroke: #ffffff;
 }
 
 .buttonSmall {
@@ -52,6 +54,17 @@
 
 .buttonLarge {
   padding: 10px;
+}
+
+.buttonLarge:disabled {
+  fill: #d2d2db;
+  stroke: #d8dcf5;
+}
+
+.buttonLarge:enabled:hover {
+  background: #171212;
+  fill: #ffffff;
+  stroke: #ffffff;
 }
 
 .searchForm {
