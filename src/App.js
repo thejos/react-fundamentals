@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Fragment } from "react";
 import axios from "axios";
-import "./App.css";
+// import "./App.css";
+import styles from "./App.module.css";
 
 /*Since we don’t need anything from within the App component that will be used to define
 variable 'title' – for example parameters coming from the component’s
@@ -154,8 +155,8 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <h1 className="headline-primary">Hacker Stories</h1>
+    <div className={styles.container}>
+      <h1 className={styles.headlinePrimary}>Hacker Stories</h1>
       <hr />
       {/*The returned output of the App component not only resembles HTML, but it
       can also be mixed with JavaScript. In fact, this output is called JSX
@@ -221,7 +222,7 @@ Refactor Item component from traditional function to arrow function. Destructuri
 const Item = ({ item, onRemoveItem }) => {
   console.log("Item renders");
   return (
-    <li className="item">
+    <li className={styles.item}>
       <span style={{ width: "50%" }}>
         <a href={item.url} target="_blank" rel="noreferrer">
           {item.title}
@@ -233,7 +234,7 @@ const Item = ({ item, onRemoveItem }) => {
       <span style={{ width: "10%" }}>
         &nbsp;
         <button
-          className="button button_small"
+          className={`${styles.button} ${styles.buttonSmall}`}
           type="button"
           onClick={() => onRemoveItem(item)}
         >
@@ -245,7 +246,7 @@ const Item = ({ item, onRemoveItem }) => {
 };
 
 const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => (
-  <form className="search-form" onSubmit={onSearchSubmit}>
+  <form className={styles.searchForm} onSubmit={onSearchSubmit}>
     <InputWithLabel
       id="search"
       inputValue={searchTerm}
@@ -255,7 +256,11 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => (
     >
       <strong>Search:</strong>
     </InputWithLabel>
-    <button className="button_large" type="submit" disabled={!searchTerm}>
+    <button
+      className={`${styles.buttonLarge}`}
+      type="submit"
+      disabled={!searchTerm}
+    >
       Submit
     </button>
   </form>
@@ -299,11 +304,11 @@ const InputWithLabel = ({
     /*One caveat with JSX, especially when we create a dedicated searchForm component, is that we must introduce a wrapping HTML element (<div></div>) to render it. Another solution is to use a React fragment. A fragment wraps other elements into a single top-level element without adding to the rendered output. As an alternative, you can also use <React.Fragment></React.Fragment> instead of the shorthand <></> All Search elements, input field, label and span should be visible in your browser now. So if you prefer to omit the wrapping <div> or <span> elements, substitute them with an empty tag that is allowed in JSX, and doesn’t introduce intermediate elements in your rendered HTML.
     Fragments are useful because grouping elements with a Fragment has no effect on layout or styles, unlike if you wrapped the elements in another container like a DOM element. Grouping elements in Fragment has no effect on the resulting DOM; it is the same as if the elements were not grouped. Note: Modern React uses <Fragment></Fragment>*/
     <Fragment>
-      <label className="label" htmlFor={id}>
+      <label className={styles.label} htmlFor={id}>
         &ensp;{children}{" "}
       </label>
       <input
-        className="input"
+        className={styles.input}
         id={id}
         type={type}
         onChange={onInputChange}
