@@ -64,6 +64,11 @@ const storiesReducer = (state, action) => {
 News API to request popular tech stories. */
 const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
+const getSumComments = (stories) => {
+  console.log("Calculating comments sum...");
+  return stories.data.reduce((result, value) => result + value.num_comments, 0);
+};
+
 /**1. This React component, called the App component, is just a JavaScript function. In contrast
 to JavaScript functions, it’s defined in PascalCase. This kind of component is commonly
 called a function component. Function components are the modern way of using components
@@ -156,9 +161,14 @@ function App() {
     event.preventDefault();
   };
 
+  const sumComments = React.useMemo(() => getSumComments(stories), [stories]);
+
   return (
     <div className={styles.container}>
       <h1 className={styles.headlinePrimary}>Hacker Stories</h1>
+      <h3 className={styles.headlineSecondary}>
+        comments total: {sumComments}
+      </h3>
       <hr />
       {/*The returned output of the App component not only resembles HTML, but it
       can also be mixed with JavaScript. In fact, this output is called JSX

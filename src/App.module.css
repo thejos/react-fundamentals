@@ -9,9 +9,18 @@
 }
 
 .headlinePrimary {
+  display: inline-block;
   font-size: 48px;
   font-weight: 300;
   letter-spacing: 2px;
+}
+
+.headlineSecondary {
+  display: inline;
+  font-size: 16px;
+  margin-left: 1em;
+  font-weight: 300;
+  font-family: "Mononoki NFM", "UbuntuMono NFM", monospace, sans-serif;
 }
 
 .item {
